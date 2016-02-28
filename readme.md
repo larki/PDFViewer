@@ -1,4 +1,6 @@
-# PDFViewerFirst things first: 
+# PDFViewer
+
+First things first: 
 This is a hobby side project for my own entertainment and education; if you find it useful, feel free to let me know, and perhaps even improve it!
 
 
@@ -8,12 +10,32 @@ It relies on the rendering engine of PDF.JS in a modern browser.  While this app
 
 In particular, it can be run  on mobile devices, although there are limits with regards to document size, as the javascript engines of mobile browsers (even fast tablets) do not seem to be fast enough for PDF.JS and large documents; at least not yet.
 
+### Features
+
+
+* LaTeX authoring and viewing of compiled document can take place on separate devices.
+* Forward and inverse search, even on separate devices
+* Vim like keyboard bindings: j,k for scrolling, gg for go to top, etc.
+* Viewer can be controlled from Neovim editor, even when run on separated devices.
+* Cropping margins for larger display of pdfs.
+* Supports hyperlinks in pdf documents.
+
+PDFViewer consists of three parts: 
+
+* A NodeJS web server,
+* A javascript application, served by the NodeJS web server, utilizing PDF.JS to display a pdf
+file and allow interactions like cropping margins, and reverse search.
+* A small set of Neovim mappings allowing forward search, and control of the web app.
+
+The NodeJS app facilitates the communication between the editor and the in-browser viewer.
+
+
 ## Setup
 
 Environment: You need to have 
 * LaTeX including Synctex (i.e.~via the MacTex distribution, or LaTeX Live). 
 * Neovim including LaTeX-Box. Best installed via Vundle or something equivalent.
-* Node
+* NodeJS.
 
 1. Download the sources or checkout the repository from Github.
 2. In the pdfviewer main folder, execute `npm install`.
@@ -21,6 +43,7 @@ Environment: You need to have
 4. See the included file `example.vim` for the commands facilitating communication between Neovim and the node webserver. If you changed the default port in step 3, make sure to change the port in the Neovim commands as well.
 
 ## Usage
+
 * Start the webserver: `node pdfviewer.js`.
 * Start Neovim, and register it with the server: `:RegisterWithNode`.
 * Open the LaTeX document you would like to edit; compile it to PDF using LaTeX Box plugin.
@@ -30,14 +53,15 @@ Environment: You need to have
 * From Neovim, to do forward search, use the LatexBox command <leader>ls
 * From the browser, to do reverse search, click on the point in the pdf, and confirm. (NB: The confirmation box is large, as to accomodate touch enabled devices. Feel free to change the css).
 * In the browser, some functions are available from the dismissable menu in the top left corner, again to accomodate mobile devices.
+
 But all functions can be accessed from the keyboard:
 	- `j,k` move one page down, or up.
 	- `gg,G` jump to the top, or end.
 	- If `n` is a number between 1 and 99, `ngg` will jump to page `n`.
-	- ```` (two back ticks) goes backwards in the jump history
+	- `` (two back ticks) goes backwards in the jump history
 	- `CTRL+o` goes forward in the jump history .
-	-`c` toggles cropped display.
-	-`r` rerenders the pdf.
+	- `c` toggles cropped display.
+	- `r` rerenders the pdf.
 * These functions can also be bound to keys INSIDE Neovim. See the included configuration file `example.vim` for an example of how this can be implemented without overriding Neovim bindings.
 			
 ## Acknowledgements
