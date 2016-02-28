@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PDF Viewer For LaTex</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui"/>
+<!--  <script src="compatibility.js"></script> -->
+	<link rel="stylesheet"   href="viewer.css"/>
+  <script src="pdf.js"></script>
+  <script src="ui_utils.js"></script>
+  <script src="jquery-2.2.1.min.js"></script>
+  <script src="socket.io/socket.io.js"></script>
+  <script src="underscore-min.js"></script>
+  <script src="https://www.promisejs.org/polyfills/promise-7.0.4.min.js"></script>
+  <script src='mousetrap.js'></script>
+  <!--<script src="pdf_viewer.js"></script>-->
+</head>
+<body>
+	<div id="controlContainer" >
+<!--<a href="#" id="zoomIn" >+</a>
+<a href="#" id="zoomReset" >=</a>
+<a href="#" id="zoomOut" >-</a>-->
+<div class="controlItem" id="crop">Crop</div>
+<!--<div class="controlItem" id='zoomToHeight' onClick="toggleZoom();">Toggle Page Mode</a></div>-->
+<div class="controlItem" id='reload' onClick='location.reload();'>Reload</a></div>
+<div class="controlItem" id='renderModeMenu' onClick='toggleRenderMode();'>Render mode: sync</a></div>
+<div class="controlItem" id='helpMenu' onClick='window.location="doc/"'>Help</a></div>
+<div class="controlItem" style="width:20px;" id="menu" onClick='toggleMenu();'><span class='helper'></span><img width='100%' src='menu.png' style='vertical-align: middle;'></div>
+</div>
+
+
+	<canvas id="animationCanvas" style="display:none; pointer-events: none;"></canvas>
+<div id="viewerContainer" style="width: 100%";>
+	<% for(var i=1; i<=pages; i++) { %>
+	<div data-pagenum="<%= i %>" class='whiteBorder'>
+		<div data-annotation="<%= i%>" class="annotationLayer"></div></div>
+	<%}%>
+</div>
+<div id="statusContainer" name="status">
+</div>
+
+<script src="incremental-scroll.js"></script>
+
+</body>
+</html>

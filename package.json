@@ -1,0 +1,33 @@
+{
+  "name": "pdfviewer",
+  "version": "0.0.2",
+  "description": "Opens webserver for exposing and watching a pdf",
+  "dependencies": {
+    "basic-auth": "^1.0.3",
+    "body-parser": "^1.14.1",
+    "compression": "^1.6.0",
+    "ejs": "^2.3.4",
+    "express": "^4.13.3",
+    "fs": "0.0.2",
+    "html": "0.0.10",
+    "http": "0.0.0",
+    "send": "^0.13.0",
+    "socket.io": "^1.3.7",
+    "url": "^0.11.0"
+  },
+  "main": "pdfviewer.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://lounge/home/mi/kindler/repos/pdfviewer.git"
+  },
+  "author": "Lars Kindler",
+  "license": "MIT",
+  "keywords": [
+    "pdf",
+    "latex"
+  ]
+}

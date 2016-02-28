@@ -1,0 +1,106 @@
+body { padding:0px;
+	margin:0px;
+}
+div {
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-size: 70%;
+}
+
+#controls{
+	display:block;
+	position:fixed;
+	z-index:400;
+	top: 10px;
+	left:15px;
+}
+
+#statusContainer{
+	right: 15px;
+	top:10px;
+	display:block;
+	position:fixed;
+	z-index: 400;
+	color: red;
+	bottom: 200px;
+}
+	
+.pageContainer{
+	background-color: white;
+	text-align: center;
+}
+.whiteBorder{ 
+	border: 5px solid white;
+}
+.page{
+	width: 100%; 
+	border: 5px solid grey;
+	padding: 0px;
+	margin:0px;
+	transition: border 1s ease-out;
+	box-sizing: border-box;
+	background-color: white;
+}
+.rect{
+	position: relative;
+	display: block;
+}
+.changed{
+	border: 5px solid red;
+}
+
+.confirmDialog{
+	width: 100px;
+	height: 50px;
+	line-height: 50px;
+	position: absolute;
+	border: 2px black solid;
+	z-index: 400;
+	background-color:red;
+	text-align: center;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	padding: 5px;
+	box-shadow: 3px 3px grey;
+}
+.highlight{
+	background-color: yellow;
+}
+#controlContainer{
+	position: fixed; 
+	display:flex;
+	left: 0px; 
+	top: 0px;
+}
+
+.controlItem{
+	font-size: 10pt;
+	border: 1px solid black;
+	background-color: rgba(0,150,200,.9);
+	height: 30px;
+	line-height: 30px;
+	display: inline;
+	padding: 10px;
+	cursor: pointer;
+}
+.helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+#viewerContainer{
+	background-color: grey;
+	text-align:center;
+}
+.pdflink{
+	background-color: rgba(0,150,200,.12);
+	cursor: pointer;
+}
+
+.documentation{
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+}
+.source{
+	font-family: 'Courier';
+}

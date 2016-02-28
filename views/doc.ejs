@@ -1,0 +1,85 @@
+<html>
+<head>
+	<title>Documentation for PDFViewer</title>
+	<link rel="stylesheet"   href="../viewer.css"/>
+</head>
+<body class="documentation">
+<h1>Documentation for PDFViewer</h1>
+<h2>Introduction</h2>
+<span style="font-weight: bold;">First things first: 
+This is a hobby side project for my own entertainment and education; if you find it useful, feel free to let me
+know, and perhaps even improve it!</span> <br/><br/>
+PDFViewer is a simple application based on PDF.js and NodeJS  made for use with Neovim with the LatexBox plugin  (or any other
+software which can communicate through RPC). Its purpose is to act as a viewer for writing 
+LaTeX documents. Therefore it should be comparable in capabilities to, e.g., Skim, xpdf,
+etc..<br/><br/>
+
+It relies on the rendering engine of PDF.JS in a modern browser. 
+While this approach has performance disadvantages when compared with a stand alone application like
+Skim, it has the advantage of being portable. For example, it is easily possible to run the
+front end of this PDFViewer on a different device than the one where compilation of the latex
+document takes place, while retaining the full feature set. <br/><br/>
+
+In particular, it can be run  on mobile devices, although there are limits with regards to document size,
+as the javascript engines of mobile browsers (even fast tablets) do not seem to be fast enough for
+PDF.JS and large documents; at least not yet.<br/><br/><br/>
+
+The main features are:<br/>
+
+<ul>
+<li>LaTeX authoring and viewing of compiled document can take place on separate devices.
+<li>Forward and inverse search, even on separate devices</li>
+<li>Vim like keyboard bindings: j,k for scrolling, gg for go to top, etc.
+<li>Viewer can be controlled from Neovim editor, even when run on separated devices.
+<li>Cropping margins for larger display of pdfs.</li>
+<li>Supports hyperlinks in pdf documents.</li>
+</ul>
+
+PDFViewer consists of three parts: 
+<ul>
+<li>A NodeJS web server,</li>
+<li>A javascript application, served by the NodeJS web server, utilizing PDF.JS to display a pdf
+file and allow interactions like cropping margins, and reverse search.</li>
+<li>A small set of Neovim mappings allowing forward search, and control of the web app.</li>
+</ul>
+The NodeJS app facilitates the communication between the editor and the in-browser viewer.<br/><br/>
+
+<h3>Acknowledgements</h3>
+I learned most of what is in the code from sources on the web,
+most notably the PDF.JS examples, particularly the <a href="https://github.com/mozilla/pdf.js/tree/master/examples/svgviewer">example viewer utilizing SVG</a> and the <a href="https://github.com/sharelatex/angular-pdfjs-viewer/tree/master/example-pdfjs/content">Example viewer from Sharelatex</a>.
+<h2>Usage</h2>
+<ul>
+	<li>Start the webserver: <span class="source">node pdfviewer.js</span>.</li>
+	<li>Start Neovim, and register it with the server: <span class="source">:RegisterWithNode</span>.</li>
+	<li>Open the LaTeX document you would like to edit; compile it to PDF using LaTeX Box plugin.</li>
+	<li>Execute <span class="source">:WatchPDFWithNode</span> in Neovim.</li>
+	<li>Open your browser and go to <span class="source">http://localhost:<%=p %></span>, or whichever address and port the web server is running on.</li>
+	<li>The PDF should now be displayed.
+		From now on, whenever you recompile your document with the LatexBox command <span class="source">&lt;leader&gt;ll</span>, the viewer will refresh the displayed pdf. 
+	</li>
+	<li>From Neovim, to do forward search, use the LatexBox command <span class="source">&lt;leader&gt;ls</span></li>
+	<li>From the browser, to do reverse search, click on the point in the pdf, and confirm. (NB: The confirmation box is large, as to accomodate touch enabled devices. Feel free to change the css).
+		<li>In the browser, some functions are available from the dismissable menu in the top left corner, again to accomodate mobile devices.<br/>
+		But all functions can be accessed from the keyboard:
+		<ul>
+			<li><span class="source">j,k</span> move one page down, or up.</li>
+			<li><span class="source">gg,G</span> jump to the top, or end.</li>
+			<li>If <span class="source">n</span> is a number between 1 and 99, <span class="source">ngg</span> will jump to page <span class="source">n</span></li>
+			<li><span class="source">``</span> goes backwards in the jump history</li>
+			<li><span class="source">ctrl+o</span> goes forward in the jump history .</li>
+			<li><span class="source">c</span> toggles cropped display.</li>
+			<li><span class="source">r</span> rerenders the pdf.</li>
+		</ul>
+		<li>The functions can also be bound to keys INSIDE Neovim. See the included file <span class="source">example.vim</span> for an example of how this can be implemented without overriding Neovim bindings.</li>
+			
+
+
+
+
+
+
+
+
+</h1>
+</body>
+</html>
