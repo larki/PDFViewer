@@ -4,7 +4,7 @@
 
 call vundle#begin()
 Plugin 'LaTeX-Box-Team/LaTeX-Box' "required!
-Plugin 'vim-airline'
+Plugin 'vim-airline/vim-airline'
 call vundle#end()            
 filetype plugin indent on    
 
@@ -13,6 +13,8 @@ command! WatchPDFWithNode :execute "call rpcnotify(0, 'watchPDF',split('"LatexBo
 
 let g:LatexBox_latexmk_options="-pv -pdf -e '$pdf_previewer=q/curl http:\\/\\/localhost:4000\\/doRerender/;'"
 let g:LatexBox_viewer="curl http://localhost:4000/doRerender"
+
+nnoremap <silent><Leader>ls :<C-u>silent !synctex view -i <C-R>=line('.')<CR>:<C-R>=col('.')<CR>:%:p  -o <C-R>=LatexBox_GetOutputFile()<CR> -d <C-R>=LatexBox_GetTexRoot()<CR> -x "curl -d  'p=\%{page+1}&x=\%{h}&y=\%{v}&w=\%{width}&h=\%{height}' http://localhost:4000/forward"<CR><C-l>
 
 "Examples for mappings
 nnoremap <silent> <leader>f :call rpcnotify(0,'doScroll', 500)<CR>

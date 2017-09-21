@@ -4,6 +4,7 @@ const port = 4000;
 
 
 
+
 var http = require('http');
 var fs = require('fs');
 var send = require('send');
@@ -14,8 +15,9 @@ var bp = require('body-parser');
 var sio = require('socket.io');
 var compress= require('compression');
 var child_process = require('child_process');
-var neovim = require('neovim');
 var basicAuth = require('basic-auth');
+var attach = require('neovim').attach;
+//var api = require('neovim/scripts/api');
 
 
 
@@ -146,77 +148,165 @@ app.post('/scrollDown', function(req, res, next) {
 	console.log('Passed on '+JSON.stringify(req.body));
 	res.end();
 });
-app.post('/registerNeovim', function(req, res, next) {
+app.post('/registerNeovim', async function(req, res, next) {
+	let socket;
+
 	nvimSocket = req.body.socket;
-	var vim = new neovim(nvimSocket, function (e) {
-		console.log('Neovim client connected through socket :'+req.body.socket);
-		JSON.stringify(e);
-		//trigger with :call rpcnotify(0, "doScroll", scrollAmount)
-		vim.rpc.subscribe("doScroll", function () {});
-		vim.on('doScroll', function (arg) {
-			io.emit('doScroll', {amount: arg});
-			console.log('scroll!');
-		});
-		vim.rpc.subscribe("scrollToTop", function () {});
-		vim.on('scrollToTop', function (arg) {
-			io.emit('scrollToTop');
-			console.log('scroll to Top!');
-		});
-		vim.rpc.subscribe("scrollToBottom", function () {});
-		vim.on('scrollToBottom', function (arg) {
-			io.emit('scrollToBottom');
-			console.log('scroll to bottom!');
-		});
-		vim.rpc.subscribe("scrollToPage", function () {});
-		vim.on('scrollToPage', function (arg) {
-			io.emit('scrollToPage', arg);
-			console.log('scroll to page '+arg+'!');
-		});
-		vim.rpc.subscribe("nextPage", function () {});
-		vim.on('nextPage', function (arg) {
-			io.emit('nextPage');
-		});
-		vim.rpc.subscribe("previousPage", function () {});
-		vim.on('previousPage', function (arg) {
-			io.emit('previousPage');
-		});
-		vim.rpc.subscribe("doRerender", function() {});
-		vim.on('doRerender', function() {
-			io.emit('doRerender');
-		});
+	console.log(nvimSocket);
 
-		vim.rpc.subscribe("toggleCrop", function () {});
-		vim.on("toggleCrop", function() {
-			io.emit('toggleCrop', {});
-			console.log('Toggle crop!');
-		});
-		vim.rpc.subscribe("toggleZoom", function () {});
-		vim.on("toggleZoom", function() {
-			io.emit('toggleZoom', {});
-			console.log('Toggle zoom!');
-		});
+	const nvim = attach({ socket: nvimSocket});
+//	const result = await nvim.requestApi();
+//	subscribeTo = ['watchPDF', 
+//		'doScroll', 
+//		'scrollToTop', 
+//		'scrollToBottom', 
+//		'scrollToPage', 
+//		'nextPage', 
+//		'previousPage',
+//		'doRender',
+//		'toggleCrop',
+//		'toggleZoom'];
 
-		vim.rpc.subscribe("watchPDF", function() {});
-		vim.on("watchPDF", function (arg) {
+	functions = {
+		'watchPDF': function (args) { 
+			console.log(args);
 			if(pdf!= '') {
 				fs.unwatchFile(pdf);
-				}
+			}
 			try { 
-				
-				var join = arg[0].join(' ');//paths with spaces
+
+				var join = args[0].join(' ');//paths with spaces
 				var file = fs.lstatSync(join);
 				if(file.isFile()&& join.slice(-4)=='.pdf'){
 					pdf = join;
 					pdfPathUpdated();
-					}
-				
+				}
+
 			} catch (e) {
 				console.log('Not a file!');
 			}
+		},
+		'doScroll': function (args) {
+			io.emit('doScroll', {amount: args[0]});
+			console.log('scroll!');
+		},
+		'scrollToTop': function (args) {
+			io.emit('scrollToTop');
+			console.log('scroll to Top!');
+		} , 
+		'scrollToBottom': function (args) {
+			io.emit('scrollToBottom');
+			console.log('scroll to bottom!');
+		},
+		'scrollToPage': function (args) {
+			io.emit('scrollToPage', args[0]);
+			console.log('scroll to page '+args[0]);
+		},
+		'nextPage': function (args) {
+			io.emit('nextPage');
+			console.log('nextPage!');
+		},
+		'previousPage': function (args) {
+			io.emit('previousPage');
+			console.log('previousPage!');
+		},
+		'doRender': function (args) {
+			io.emit('doRender');
+			console.log('doRender!');
+		},
+		'toggleCrop': function (args) {
+			io.emit('toggleCrop');
+			console.log('toggleCrop');
+		},
+		'toggleZoom': function (args) {
+			io.emit('toggleZoom');
+			console.log('toggleZoom!');
+		}
 
-		});
+	};
 
+	for (var key in functions) {
+		nvim.subscribe(key);
+	}
+
+
+	nvim.on('notification', (method,args) => {
+		try{
+			functions[method](args);
+		}
+		catch (e) {}
 	});
+
+
+//	var vim = new neovim(nvimSocket, function (e) {
+//		console.log('Neovim client connected through socket :'+req.body.socket);
+//		JSON.stringify(e);
+//		//trigger with :call rpcnotify(0, "doScroll", scrollAmount)
+//		vim.rpc.subscribe("doScroll", function () {});
+//		vim.on('doScroll', function (arg) {
+//			io.emit('doScroll', {amount: arg});
+//			console.log('scroll!');
+//		});
+//		vim.rpc.subscribe("scrollToTop", function () {});
+//		vim.on('scrollToTop', function (arg) {
+//			io.emit('scrollToTop');
+//			console.log('scroll to Top!');
+//		});
+//		vim.rpc.subscribe("scrollToBottom", function () {});
+//		vim.on('scrollToBottom', function (arg) {
+//			io.emit('scrollToBottom');
+//			console.log('scroll to bottom!');
+//		});
+//		vim.rpc.subscribe("scrollToPage", function () {});
+//		vim.on('scrollToPage', function (arg) {
+//			io.emit('scrollToPage', arg);
+//			console.log('scroll to page '+arg+'!');
+//		});
+//		vim.rpc.subscribe("nextPage", function () {});
+//		vim.on('nextPage', function (arg) {
+//			io.emit('nextPage');
+//		});
+//		vim.rpc.subscribe("previousPage", function () {});
+//		vim.on('previousPage', function (arg) {
+//			io.emit('previousPage');
+//		});
+//		vim.rpc.subscribe("doRerender", function() {});
+//		vim.on('doRerender', function() {
+//			io.emit('doRerender');
+//		});
+//
+//		vim.rpc.subscribe("toggleCrop", function () {});
+//		vim.on("toggleCrop", function() {
+//			io.emit('toggleCrop', {});
+//			console.log('Toggle crop!');
+//		});
+//		vim.rpc.subscribe("toggleZoom", function () {});
+//		vim.on("toggleZoom", function() {
+//			io.emit('toggleZoom', {});
+//			console.log('Toggle zoom!');
+//		});
+//
+//		vim.rpc.subscribe("watchPDF", function() {});
+//		vim.on("watchPDF", function (arg) {
+//			if(pdf!= '') {
+//				fs.unwatchFile(pdf);
+//				}
+//			try { 
+//				
+//				var join = arg[0].join(' ');//paths with spaces
+//				var file = fs.lstatSync(join);
+//				if(file.isFile()&& join.slice(-4)=='.pdf'){
+//					pdf = join;
+//					pdfPathUpdated();
+//					}
+//				
+//			} catch (e) {
+//				console.log('Not a file!');
+//			}
+//
+//		});
+//
+//	});
 	res.end();
 });
 
@@ -240,15 +330,20 @@ io.sockets.on('connection', function(socket) {
 			var line = result[result.length-1];
 			var file = result[0].replace('./','');
 			console.log('File: '+file);
-			var client = new neovim(nvimSocket, function() {
-				client.rpc.get_current_buffer(function (buffer) {
-					buffer.get_name(function (name) {
-						if(name == file)
-							client.rpc.command(':'+line, function() {});
-						else {
-							client.rpc.command(':e +'+line+' '+file, function() {});
-						}
-					});
+			
+			const nvim = attach({socket: nvimSocket});
+			console.log(line+' '+file);
+			nvim.command(line);
+
+//			var client = new neovim(nvimSocket, function() {
+//				client.rpc.get_current_buffer(function (buffer) {
+//					buffer.get_name(function (name) {
+//						if(name == file)
+//							client.rpc.command(':'+line, function() {});
+//						else {
+//							client.rpc.command(':e +'+line+' '+file, function() {});
+//						}
+//					});
 				});
 
 
@@ -257,8 +352,8 @@ io.sockets.on('connection', function(socket) {
 //							buffer.get_line_count(function (count) {
 //								console.log('meh'+count);});
 //						});
-			});
-		});
+			//});
+		//});
 
 
 	});

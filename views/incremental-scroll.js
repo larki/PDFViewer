@@ -47,7 +47,7 @@ function recalculateLayout() {
 		console.log('Resize!');
 		var factor = $(window).width()/windowWidth;
 		windowWidth = $(window).width();
-		$('svg').map( function() {
+		$(document.getElementsByTagName('svg:svg')).map( function() {
 			var oldWidth= $(this).width();
 			var oldHeight =$(this).height(); 
 			$(this).attr('width',windowWidth);
@@ -128,8 +128,12 @@ function cropSVG(svg) {
 
 
 function toggleCrop() {
+	console.log(cropped);
+
 	if(!cropped) {
-		$('svg').map( function() { cropSVG(this);});
+		//$('svg').map( function() { cropSVG(this);});
+		$(document.getElementsByTagName('svg:svg')).map(function() {cropSVG(this);});
+		
 		/*
 		$('svg').map( function() {
 			//var BBox = $(this).children()[0].getBoundingClientRect();
@@ -174,10 +178,16 @@ function toggleCrop() {
 		cropped = true;
 	}
 	else {
-		$('svg').map( function() {
+		$(document.getElementsByTagName('svg:svg')).map(function() {
 			console.log('NoCrop!');
 			$(this)[0].setAttribute('viewBox',$(this)[0].getAttribute('data-viewBox-noCrop'));
 		});
+
+
+		//$('svg').map(function() {
+		//	console.log('NoCrop!');
+		//	$(this)[0].setAttribute('viewBox',$(this)[0].getAttribute('data-viewBox-noCrop'));
+		//});
 		$('section').remove();
 		renderAnnotations();
 			cropped = false;
@@ -205,7 +215,7 @@ function zoomToHeightIn() {
 //			}
 //		}
 
-	$('svg').map( function () {
+	$(document.getElementsByTagName('svg:svg')).map( function () {
 		var oldHeight= $(this).height();
 		var oldWidth= $(this).width();
 		if(oldHeight>wHeight) {
@@ -241,7 +251,7 @@ function zoomToHeightOut() {
 	var currentPage = getVisiblePage().getAttribute('data-pagenum');;
 	var currentPage = getVisiblePage().getAttribute('data-pagenum');;
 
-	$('svg').map(function() {
+	$(document.getElementsByTagName('svg:svg')).map(function() {
 		if(!$(this)[0].hasAttribute('data-viewBox-noCrop'))
 			$(this)[0].setAttribute('data-viewBox-noCrop',$(this)[0].getAttribute('viewBox'));
 		var box = $(this)[0].getAttribute('data-viewBox-noCrop').split(' ');
@@ -916,7 +926,7 @@ function backwardInHistory() {
 
 function renderAnnotations() {
 	$('section').remove();
-	$('svg').map(function() { setupAnnotations($(this));});
+	$(document.getElementsByTagName('svg:svg')).map(function() { setupAnnotations($(this));});
 }
 function setupAnnotations(svg) {
 	var div = svg.parent();
